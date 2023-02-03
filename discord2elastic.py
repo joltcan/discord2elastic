@@ -77,7 +77,7 @@ async def on_message(m):
         "team_id": "%s" % m.guild.id,
         "text": m.content,
         "type": m.type[0],
-        "ts": "%s" % time.mktime(m.created_at.timetuple()),
+        "ts": time.mktime(m.created_at.timetuple()),
         "user": m.author.name + '#' + m.author.discriminator,
         "user_team": m.guild.name,
     }
