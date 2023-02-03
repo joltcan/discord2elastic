@@ -1,0 +1,21 @@
+---
+- hosts: "{{ discord2elastic_docker_host }}"
+
+  tasks:
+    - name:
+        "docker_container : discord2elastic"
+      docker_container:
+        name: "{{ discord2elastic_name | default('discord2elastic') }}"
+        image: "{{ discord2elastic_docker_image | default('jolt/discord2elastic:latest') }}"
+        hostname: "{{ discord2elastic_hostname | default('discord2elastic') }}"
+        state: "{{ discord2elastic_docker_state | default('started') }}"
+        restart_policy: "{{ discord2elastic_docker_restart_policy | default('unless-stopped') }}"
+        restart: "{{ discord2elastic_docker_restart | default('true') }}"
+        user: "{{ discord2elastic_docker_uid | default (1100) }}"
+        env:
+          BOT_TOKEN: "{{ discord2elastic_bot_token | default('<your discord bot token>') }}"
+          ELASTICSEARCH_URL: "{{ discord2elastic_elasticsearch_url | default('https://example.com:9200/') }}"
+          ELASTICSEARCH_INDEX: "{{ discord2elastic_elasticsearch_index | default('<discord_log>') }}"
+        networks_cli_compatible: "{{ discord2elastic_docker_networks_cli_compatible | default('true') }}"
+        container_default_behavior: "{{ discord2elastic_docker_container_default_behavior | default('no_defaults') }}"
+      become: yes
