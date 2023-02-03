@@ -2,13 +2,13 @@
 
 Sometimes you want chatlogs to be searchable. Put them in elasticsearch and keep em!
 
-## setup
+## Setup
 
 discord2elastic runs by itself. Set the environment variables and go ahead. 
 
 You first need a discord user, see the [Discord bot](#Discord-bot) topic for reference. 
 
-You also need a elasticsearch user that can create indices and write them.
+You also need an [elasticsearch](#Elasticsearch) user that can create index and documents.
 
 Run it manually or use the [ansible playbook](#Ansible-playbook):
 
@@ -41,6 +41,32 @@ The docker runs as `USER nobody`.
 2. Navigate to `bot` and enable it, and copy the `TOKEN`. This is used for the `BOT_TOKEN` variable.
 3  Still under `bot`scroll down and enable "Messsage Content Intent" under `Privileged Gateway Intents`
 4. Use the following URL , replace with the `CLIENT_ID` in the link: `https://discord.com/oauth2/authorize?scope=bot&permissions=0&client_id=CLIENT_ID`
+
+## Elasticsearch
+
+I created role with `view_index_metadata` and `create` and assigned it to my user.
+
+To store, create an index, elastic sometimes doesn't want to understand datetime/epoch, so you might wanna use the below as mapping, I do it in the dev_tools/console:
+
+```json
+PUT /<discord_log_index>/_mapping
+{
+  "properties" : {
+    "text": {
+      "type": "text",
+      "fields": {
+        "keyword_type": {
+        "type": "keyword"
+        }
+      }
+    },
+    "ts": {
+      "type":"date",
+      "format": "epoch_second"
+    }
+  }
+}
+```
 
 ## Ansible playbook
 
