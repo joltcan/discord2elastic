@@ -6,11 +6,11 @@ Sometimes you want chatlogs to be searchable. Put them in elasticsearch and keep
 
 discord2elastic runs by itself. Set the environment variables and go ahead. 
 
-You first need a discord user, see the Discord topic for reference. 
+You first need a discord user, see the [Discord bot](#Discord-bot) topic for reference. 
 
 You also need a elasticsearch user that can create indices and write them.
 
-Run it manually or use the ansible playbook:
+Run it manually or use the [ansible playbook](#Ansible-playbook):
 
 ```
 export ELASTICSEARCH_INDEX="discord_log"
@@ -34,7 +34,15 @@ Port is _mandatory_ in `ELASTICSEARCH_URL`.
 
 The docker runs as `USER nobody`.
 
-## Ansible
+## Discord bot
+
+1. Make an application [here](https://discord.com/developers/applications)  and name it `log2elastic` or whatever you prefer. Due to Discord rules the name can not contain `discord`.
+2  Under `General Information`, copy the `APPLICATION ID`.
+2. Navigate to `bot` and enable it, and copy the `TOKEN`. This is used for the `BOT_TOKEN` variable.
+3  Still under `bot`scroll down and enable "Messsage Content Intent" under `Privileged Gateway Intents`
+4. Use the following URL , replace with the `CLIENT_ID` in the link: `https://discord.com/oauth2/authorize?scope=bot&permissions=0&client_id=CLIENT_ID`
+
+## Ansible playbook
 
 I have included a [provision-discord2elastic](provision-discord2elastic.yml) playbook you can use. Just change the "hosts" parameter and set some defaults in host/group_vars and you should be good to go:
 
@@ -42,7 +50,7 @@ host_vars/<docker_host>.yml:
 
 ```yml
 discord2elastic_bot_token: sometoken
-discord2elastic_elasticsearch_url: https://elastic:9200
+discord2elastic_elasticsearch_url: https://username:password@moose:9200/
 discord2elastic_elasticsearch_index: discord_log
 ```
 
