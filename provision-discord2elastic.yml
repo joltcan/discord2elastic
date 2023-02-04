@@ -2,6 +2,7 @@
 - hosts: "{{ discord2elastic_docker_host }}"
 
   tasks:
+    # https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html
     - name:
         "docker_container : discord2elastic"
       docker_container:
@@ -11,6 +12,7 @@
         state: "{{ discord2elastic_docker_state | default('started') }}"
         restart_policy: "{{ discord2elastic_docker_restart_policy | default('unless-stopped') }}"
         restart: "{{ discord2elastic_docker_restart | default('true') }}"
+        pull: "{{ discord2elastic_docker_pull | default('true') }}"
         env:
           BOT_TOKEN: "{{ discord2elastic_bot_token | default('<your discord bot token>') }}"
           ELASTICSEARCH_URL: "{{ discord2elastic_elasticsearch_url | default('https://example.com:9200/') }}"
