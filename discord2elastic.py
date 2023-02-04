@@ -71,42 +71,42 @@ async def on_message(m):
     if m.author == client.user:
         return
 
-    # print the message structure
-    # print(m, flush=True)
+    # debug output of the whole message type
+    if debugprint:
+        print(m, flush=True)
 
+    # create basic message structure
     doc = {
         "channel": m.channel.name,
-        "team_id": "%s" % m.guild.id,
+        "team_id": str(m.guild.id),
         "text": m.content,
-        "type": m.type[0],
+        "type": str(m.type[0]),
         "ts": time.mktime(m.created_at.timetuple()),
-        "user": m.author.name + '#' + m.author.discriminator,
-        "user_team": m.guild.name,
+        "user": m.author.name + '#' + str(m.author.discriminator),
+        "user_team": str(m.guild.name),
     }
 
     # if a bot write there might not be a real nick
     if m.author.bot:
         doc['is_bot'] = m.author.bot
-        if debugprint:
-            print(m, flush=True)
 
-    if m.author.nick:
-        doc["nick.name"] = m.author.nick,
-    else:
+    # use author nick, but use name if it's from a bot since they don't have a nick
+    try:
+        doc["nick.name"] = m.author.nick
+    except:
         doc["nick.name"] = m.author.name
 
+    # convert to string
     if m.author.id:
-        doc["nick.id"] = "%s" % m.author.id,
+        doc["nick.id"] = str(m.author.id),
 
+    # append a list of attachments if someone wanna build a ui at some pount.
     if m.attachments:
         attachments = ""
         for a in m.attachments:
             attachments += "\nAttachment %s: [%s](%s)" %(a.id, a.filename, a.url)
 
-        if doc['text']:
-            doc['text'] += attachments
-        else:
-            doc['text'] = attachments
+        doc['text'] += attachments
 
     if m.edited_at:
         doc["edited.ts"] = time.mktime(m.edited_at.timetuple())
@@ -117,7 +117,6 @@ async def on_message(m):
     try:
         res = es.index(index=elasticsearch_index, document=doc)
     except ElasticsearchWarning as e:
-        print(res, flush=True)
         print("Warning from elastic: %s" % e, flush=True)
 
     if debugprint:
