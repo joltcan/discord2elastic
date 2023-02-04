@@ -11,7 +11,6 @@
         state: "{{ discord2elastic_docker_state | default('started') }}"
         restart_policy: "{{ discord2elastic_docker_restart_policy | default('unless-stopped') }}"
         restart: "{{ discord2elastic_docker_restart | default('true') }}"
-        user: "{{ discord2elastic_docker_uid | default (1100) }}"
         env:
           BOT_TOKEN: "{{ discord2elastic_bot_token | default('<your discord bot token>') }}"
           ELASTICSEARCH_URL: "{{ discord2elastic_elasticsearch_url | default('https://example.com:9200/') }}"
