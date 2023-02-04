@@ -14,12 +14,13 @@ else
 endif
 
 build:
-	test -n "$(VERSION)"  # Version is missing
+	test -n "$(VERSION)"  # test if version is set
 	$(DOCKER) build --rm \
 		--tag=$(IMAGE_NAME) \
 		--tag=$(IMAGE_NAME):$(VERSION) .
 
 run:
+	-$(DOCKER) rm $(IMAGE_NAME) # remove the old container
 	$(DOCKER) \
 		run \
 		-e ELASTICSEARCH_INDEX=${ELASTICSEARCH_INDEX} \
