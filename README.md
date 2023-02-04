@@ -27,12 +27,13 @@ docker run \
 	--name=discord2elastic \
 	jolt/discord2elastic
 ```
-
 ## note
 
 Port is _mandatory_ in `ELASTICSEARCH_URL`.
 
 The docker runs as `USER nobody`.
+
+Add an additional `DEBUG=1` if you want logging.
 
 ## Discord bot
 
