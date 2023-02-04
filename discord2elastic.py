@@ -36,6 +36,9 @@ if not elasticsearch_index:
     time.sleep(5)
     sys.exit(1)
 
+# set if more info is needed
+debugprint = os.getenv('DEBUG')
+
 # connect to elastic
 es = Elasticsearch(elasticsearch_url)
 
@@ -73,7 +76,6 @@ async def on_message(m):
 
     doc = {
         "channel": m.channel.name,
-        "nick.name": m.author.nick,
         "team_id": "%s" % m.guild.id,
         "text": m.content,
         "type": m.type[0],
@@ -85,6 +87,8 @@ async def on_message(m):
     # if a bot write there might not be a real nick
     if m.author.bot:
         doc['is_bot'] = m.author.bot
+        if debugprint:
+            print(m, flush=True)
 
     if m.author.nick:
         doc["nick.name"] = m.author.nick,
@@ -107,10 +111,16 @@ async def on_message(m):
     if m.edited_at:
         doc["edited.ts"] = time.mktime(m.edited_at.timetuple())
 
-    # wanna see how it looks?
-    # print(json.dumps(doc, indent=1), flush=True)
+    if debugprint:
+        print(json.dumps(doc, indent=1), flush=True)
 
-    res = es.index(index=elasticsearch_index, document=doc)
-    #print(res, flush=True)
+    try:
+        res = es.index(index=elasticsearch_index, document=doc)
+    except ElasticsearchWarning as e:
+        print(res, flush=True)
+        print("Warning from elastic: %s" % e, flush=True)
+
+    if debugprint:
+        print(res, flush=True)
 
 client.run(bot_token)
