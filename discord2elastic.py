@@ -84,17 +84,18 @@ async def on_message(m):
         "ts": time.mktime(m.created_at.timetuple()),
         "user": m.author.name + '#' + str(m.author.discriminator),
         "user_team": str(m.guild.name),
+        "is_bot": m.author.bot
     }
 
-    # if a bot write there might not be a real nick
+    # if a bot write there is never a nick
     if m.author.bot:
-        doc['is_bot'] = m.author.bot
-
-    # use author nick, but use name if it's from a bot since they don't have a nick
-    try:
-        doc["nick.name"] = m.author.nick
-    except:
         doc["nick.name"] = m.author.name
+    else:
+        # does the user have a per server nick?
+        if m.author.nick:
+            doc["nick.name"] = m.author.nick
+        else:
+            doc["nick.name"] = m.author.name
 
     # convert to string
     if m.author.id:
